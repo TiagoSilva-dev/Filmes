@@ -20,12 +20,12 @@ export default function Home() {
       <div className="lista-filmes">
         {filmes.map((item) => {
           return (
-            <section key={item.id} >
+            <article key={item.id} >
               <strong>{item.nome}</strong>
               <p>{item.sinopse}</p>
               <img src={item.foto} alt={item.nome} />
-              <Link to="/">Acessar</Link>
-            </section>
+              <Link to={`/filme/${item.id}`}>Acessar</Link>
+            </article>
 
           );
         })}
