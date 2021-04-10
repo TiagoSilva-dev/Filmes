@@ -3,23 +3,29 @@ import { useParams } from 'react-router-dom';
 import './filme-info.css';
 import api from '../../services/api';
 import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
 
 export default function Filme() {
   const { id } = useParams();
   const [filme, setFilme] = useState([]);
   const [loading, setLoading] = useState(true);
+  const History = useHistory();
 
 
   useEffect(() => {
 
     async function buscaFilme() {
       const response = await api.get(`r-api/?api=filmes/${id}`);
+      if (response.data.length === 0) {
+        History.replace('/');
+      };
       setFilme(response.data);
+
       setLoading(false);
     }
     buscaFilme();
 
-  }, [id]);
+  }, [History, id]);
 
   function salvaFilme() {
     const minhaLista = localStorage.getItem('@filmes'); // recebendo oq esta salvo no storage
@@ -28,12 +34,12 @@ export default function Filme() {
     const hasFilme = filmesSalvos.some((filmeSalvos) => filmeSalvos.id === filme.id);
 
     if (hasFilme) {
-     toast.info('Voce Já possui este filme salvo!');
+      toast.info('Voce Já possui este filme salvo!');
       return;
     }
     filmesSalvos.push(filme);
     localStorage.setItem('@filmes', JSON.stringify(filmesSalvos));
-   toast.success('Filme Salvo com sucesso! ');
+    toast.success('Filme Salvo com sucesso! ');
   }
 
   if (loading) {
