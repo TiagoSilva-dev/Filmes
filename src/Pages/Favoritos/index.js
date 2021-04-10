@@ -1,29 +1,49 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import './favoritos.css';
+import { toast } from 'react-toastify';
 
 
 export default function Favoritos() {
-  const[filmes,setFilmes] = useState([]);
+  const [filmes, setFilmes] = useState([]);
 
-  useEffect(()=>{
-   async function loadFavoritos(){
+  useEffect(() => {
+    async function loadFavoritos() {
       const filmesSalvo = await localStorage.getItem('@filmes');
       let filmeFav = JSON.parse(filmesSalvo);
 
       setFilmes(filmeFav);
     }
     loadFavoritos();
-  },[])
-  return (
-    <div>
-      <h1>Favoritos ... </h1>
-      {filmes.map((item)=>{
-        return(
-          <div>
+  }, []);
 
-          <h1>{item.nome}</h1>
-          </div>
-        )
-      })}
+  function handleDelete(id) {
+    let filtroFilmes = filmes.filter((item) => {
+      return (item.id !== id);
+    });
+    setFilmes(filtroFilmes);
+    localStorage.setItem('@filmes', JSON.stringify(filtroFilmes));
+    toast.success('Filme Removido Com Sucesso');
+  }
+
+  return (
+    <div id="meus-filmes">
+      <h1>Meus Filmes </h1>
+      {filmes.length === 0 && <span>Voce não possui filmes salvos :( </span>}
+      <ul>
+        {filmes.map((item) => {
+          return (
+            <li key={item.id}>
+              <span>{item.nome}</span>
+
+              <div>
+                <Link to={`/filme/${item.id}`}>Detalhes</Link>
+                <button onClick={() => handleDelete(item.id)}>Excluir</button>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   );
 }
